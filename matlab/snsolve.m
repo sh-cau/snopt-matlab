@@ -187,7 +187,10 @@ snsetwork(iwork,rwork);
 if ~strcmp(specsfile,''),
   mexopt = 9;
   info = snspec(specsfile);
-
+  % hotfix
+  if info == 0
+      info = 101;
+  end
   if info ~= 101 && info ~= 107,
     x = []; xmul = []; xstate = [];
     F = []; Fmul = []; Fstate = [];
