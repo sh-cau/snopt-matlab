@@ -336,8 +336,8 @@ elseif nargin >= 9 && nargin <= 14,
   end
   
   if nargin == 13 || nargin == 14
-      iGfun = varargin{12};
-      jGvar = varargin{13};
+      iGfun = varargin{8};
+      jGvar = varargin{9};
   end
 
   nonlcon  = checkFun(nonlc,'SNOPT','nonlcon');
