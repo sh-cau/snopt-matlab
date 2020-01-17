@@ -27,7 +27,6 @@ mexopt = 1;
 
 
 fval     = F(1);
-zero     = zeros(n,1);
 states.x = xstate(1:n);
 lambda.x = xmul(1:n);
 
@@ -43,7 +42,7 @@ end
 if nonlin_eq > 0,
   i1 = 1+nonlin_ineq; i2 = i1-1 + nonlin_eq;
   lambda.eqnonlin = Fmul(i1:i2);
-  states.eqnonlin = Fmul(i1:i2);
+  states.eqnonlin = Fstate(i1:i2);
 else
   lambda.eqnonlin = [];
   states.eqnonlin = [];
@@ -52,7 +51,7 @@ end
 if linear_ineq > 0,
   i1 = 1+nonlin_ineq+nonlin_eq; i2 = i1-1 + linear_ineq;
   lambda.ineqlin = Fmul(i1:i2);
-  states.ineqlin = Fmul(i1:i2);
+  states.ineqlin = Fstate(i1:i2);
 else
   lambda.ineqlin = [];
   states.ineqlin = [];
@@ -61,7 +60,7 @@ end
 if linear_eq > 0,
   i1 = 1+nonlin_ineq+nonlin_eq+linear_ineq; i2 = i1-1 + linear_eq;
   lambda.eqlin = Fmul(i1:i2);
-  states.eqlin = Fmul(i1:i2);
+  states.eqlin = Fstate(i1:i2);
 else
   lambda.eqlin = [];
   states.eqlin = [];
