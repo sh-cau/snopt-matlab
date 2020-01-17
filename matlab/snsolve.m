@@ -379,10 +379,11 @@ nCon = 1 + nonlin_ineq + nonlin_eq + linear_ineq + linear_eq;
 %           [ A_eq x  ]            [ 0        ]   [  A_eq ]     linear_eq
 %                                    "G(x)"         "A"
 
-[iAfun,jAvar,Aij] = find([zeros(1+nonlin_ineq+nonlin_eq,n); A; Aeq]);
+[iAfun,jAvar,Aij] = find([zeros(1+nonlin_ineq+nonlin_eq,n); A; Aeq]); % TODO: why do we need the zero padding here?
 
 if isempty(iGfun)
-    [iGfun,jGvar,~]   = find([ones(1+nonlin_ineq+nonlin_eq,n); zeros(linear_ineq+linear_eq,n)]);
+    % assume dense matrix
+    [iGfun,jGvar,~]   = find(ones(1+nonlin_ineq+nonlin_eq,n));
 end
 
 
