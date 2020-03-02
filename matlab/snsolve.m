@@ -16,6 +16,9 @@ function [x,fval,info,output,lambda,states] = snsolve(obj,x0,A,b,varargin)
 %   [...] = snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,lambda,states)
 %   [...] = snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,lambda,states,options)
 %
+%   [...] = snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,lambda,states,iGfun,jGVar)
+%   [...] = snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,lambda,states,iGfun,jGVar,options)
+%
 %
 % Output from snsolve:
 %   [x,fval,info,output,lambda,states] = snsolve(...)
@@ -107,7 +110,7 @@ optionsLoc = 0;
 
 % Deal with options
 if nargin == 5 || nargin == 7 || nargin == 9 || ...
-	   nargin == 10 || nargin == 12,
+	   nargin == 10 || nargin == 12 || nargin == 14,
   optionsLoc = nargin - 4;
   if isstruct(varargin{optionsLoc}),
     options = varargin{optionsLoc};
@@ -296,11 +299,14 @@ elseif nargin == 8 || (nargin == 9 && optionsLoc ~=0),
   xmul = [];  xstate = [];
   Fmul = [];  Fstate = [];
 
-elseif nargin >= 9 && nargin <= 12,
+elseif nargin >= 9 && nargin <= 14,
   % snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon)
   % snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,options)
   % snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,lambda,states)
   % snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,lambda,states,options)
+  
+  %snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,lambda,states,iGfun,jGVar)
+  %snsolve(obj,x0,A,b,Aeq,beq,xlow,xupp,nonlcon,lambda,states,iGfun,jGVar,options)
 
   Aeq       = varargin{1};
   beq       = varargin{2};
@@ -310,17 +316,28 @@ elseif nargin >= 9 && nargin <= 12,
   linear_eq = size(Aeq,1);
   xmul = [];  xstate = [];
   Fmul = [];  Fstate = [];
+  iGfun = []; jGvar = [];
 
-  if nargin == 11 || nargin == 12,
-    lambda = varargin{6};
-    states = varargin{7};
-
-    xmul   = lambda.x;  xstate = states.x;
-    Fmul   = [ 0; lambda.ineqnonlin; lambda.eqnonlin;
-	       lambda.ineqlin; lambda.eqlin];
-    Fstate = [ 0; states.ineqnonlin; states.eqnonlin;
-	       states.ineqlin; states.eqlin];
-
+  if nargin >= 11 && nargin <= 14,
+      if isempty(varargin{6})
+      else
+          lambda = varargin{6};
+          xmul   = lambda.x;
+          Fmul   = [ 0; lambda.ineqnonlin; lambda.eqnonlin;
+                    lambda.ineqlin; lambda.eqlin];
+      end
+      if isempty(varargin{7})
+      else
+          states = varargin{7};
+          xstate = states.x;
+          Fstate = [ 0; states.ineqnonlin; states.eqnonlin;
+                    states.ineqlin; states.eqlin];
+      end
+  end
+  
+  if nargin == 13 || nargin == 14
+      iGfun = varargin{8};
+      jGvar = varargin{9};
   end
 
   nonlcon  = checkFun(nonlc,'SNOPT','nonlcon');
@@ -362,8 +379,14 @@ nCon = 1 + nonlin_ineq + nonlin_eq + linear_ineq + linear_eq;
 %           [ A_eq x  ]            [ 0        ]   [  A_eq ]     linear_eq
 %                                    "G(x)"         "A"
 
-[iAfun,jAvar,Aij] = find([zeros(1+nonlin_ineq+nonlin_eq,n); A; Aeq]);
-[iGfun,jGvar,~]   = find([ones(1+nonlin_ineq+nonlin_eq,n); zeros(linear_ineq+linear_eq,n)]);
+[iAfun,jAvar,Aij] = find([zeros(1+nonlin_ineq+nonlin_eq,n); A; Aeq]); % TODO: why do we need the zero padding here?
+
+if isempty(iGfun)
+    % assume dense matrix
+    [iGfun,jGvar,~]   = find(ones(1+nonlin_ineq+nonlin_eq,n));
+end
+
+
 
 iAfun   = colvec(iAfun,'iAfun',1,0);
 jAvar   = colvec(jAvar,'jAvar',1,0);
