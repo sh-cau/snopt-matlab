@@ -255,7 +255,8 @@ catch
   try
     fobj = myobj(x0);
     gotGrad = 0;
-  catch
+  catch message
+      getReport(message)
     error('SNOPT:InputArgs', ...
 	  'Wrong number of output arguments for obj');
   end
