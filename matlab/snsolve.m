@@ -352,7 +352,8 @@ elseif nargin >= 9 && nargin <= 14,
     try
       [c,ceq]  = nonlcon(x0);
       gotDeriv = 0;
-    catch
+    catch message
+        getReport(message)
       error('SNOPT:InputArgs', ...
 	    'Wrong number of output arguments for nonlcon');
     end
