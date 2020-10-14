@@ -12,8 +12,7 @@
 
 Gind = iGfun + (jGvar-1)*nRows;
 % indexing is significantly faster for full matrix
-Gfull = full(Gfull);
-
+Gfull = full(g
 Gvec = Gfull(Gind);
 
 % Avoid Gvec being stored in sparse format:
