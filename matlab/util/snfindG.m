@@ -1,4 +1,4 @@
- function [Gvec] = snfindG(iGfun, jGvar, Gfull)
+ function [Gvec] = snfindG(iGfun, jGvar, Gfull,nRows)
 %function [Gvec] = snfindG(iGfun, jGvar, Gfull)
 %    Grabs elements in Gfull corresponding to
 %    row and column indices (iGfun, jGvar).
@@ -10,12 +10,12 @@
 %    elements in Gfull must not be deleted
 %    from Gvec.
 
-Gind = sub2ind(size(Gfull), iGfun, jGvar);
+Gind = iGfun + (jGvar-1)*nRows;
 Gvec = Gfull(Gind);
 
 % Avoid Gvec being stored in sparse format:
 Gvec = full(Gvec);
 m    = size(Gvec,1);
-if m == 1,
+if m == 1
   Gvec = Gvec';
 end

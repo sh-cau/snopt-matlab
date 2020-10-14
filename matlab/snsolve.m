@@ -491,7 +491,7 @@ F = [ fobj;   c;    ceq     ];
 G = [ gradobj gradc gradceq ]';
 
 % Convert G to vector format to match SNOPTA and (iGfun,jGvar)
-[~,n] = size(G);
-if n > 1,
-  G = snfindG(iGfun,jGvar,G);
+[nRows,nCols] = size(G);
+if nCols > 1,
+  G = snfindG(iGfun,jGvar,G,nRows);
 end
