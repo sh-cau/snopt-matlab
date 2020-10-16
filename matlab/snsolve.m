@@ -488,10 +488,12 @@ if nargin == 9,
 end
 
 F = [ fobj;   c;    ceq     ];
-G = [ gradobj gradc gradceq ]';
+% Change here as we do not need to transpose if we just switch the column and row indices when calling snfindG().
+G = [ gradobj gradc gradceq ];
 
 % Convert G to vector format to match SNOPTA and (iGfun,jGvar)
 [nRows,nCols] = size(G);
-if nCols > 1,
-  G = snfindG(iGfun,jGvar,G,nRows);
+if nCols > 1
+    % Change here: as above gradients are put together in G here the row and column indices are changed
+  G = snfindG(jGvar,iGfun,G,nRows);
 end
