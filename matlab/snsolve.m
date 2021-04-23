@@ -247,7 +247,6 @@ n           = length(x0);
 % Check user-defined functions
 myobj = checkFun(obj,'SNOPT','obj');
 
-gotGrad = 0;
 try
   [fobj,gradobj] = myobj(x0);
   gotGrad = 1;
